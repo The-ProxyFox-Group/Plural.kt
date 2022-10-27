@@ -1,4 +1,3 @@
-# A template for Kotlin using Gradle and JDK 17
+# Plural.kt
 
-## A Note On Licensing
-You are allowed to license this template under any and all licenses, without ristriction.
+A PluralKit API wrapper for Kotlin

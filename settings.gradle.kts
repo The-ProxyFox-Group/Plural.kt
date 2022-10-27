@@ -1,3 +1,3 @@
 
-rootProject.name = "projectname"
+rootProject.name = "pluralkt"
 
