@@ -9,7 +9,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.gson.*
 
-object Rest {
+object RestClient {
     private const val baseUrl = "https://api.pluralkit.me/v2/"
     private val client = HttpClient(CIO) {
         install(UserAgent) {
