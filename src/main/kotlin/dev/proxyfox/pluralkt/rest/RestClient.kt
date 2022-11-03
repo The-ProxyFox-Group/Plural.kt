@@ -20,7 +20,7 @@ object RestClient {
         }
     }
 
-    suspend fun fetchSystem(systemRef: String, token: String? = null): ApiSystem? = get("systems/$systemRef/", token)
+    suspend fun fetchSystem(systemRef: PkReference, token: String? = null): ApiSystem? = get("systems/$systemRef/", token)
 
     
 
