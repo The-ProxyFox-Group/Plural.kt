@@ -1,36 +1,28 @@
 package dev.proxyfox.pluralkt.rest
 
-import dev.proxyfox.pluralkt.types.*
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.serialization.gson.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.*
 
 object RestClient {
-    private const val baseUrl = "https://api.pluralkit.me/v2/"
+    const val baseUrl = "https://api.pluralkit.me/v2/"
     private val client = HttpClient(CIO) {
         install(UserAgent) {
             agent = "Plural.kt library"
         }
         install(ContentNegotiation) {
-            gson()
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+            })
         }
-    }
-
-    suspend fun fetchSystem(systemRef: PkReference, token: String? = null): ApiSystem? = get("systems/$systemRef/", token)
-
-    
-
-    private suspend inline fun <reified T> get(path: String, token: String?): T? {
-        val res = client.get(baseUrl+path) {
-            if (token != null) {
-                header("Authorization", token)
-            }
-        }
-        if (res.status.value == 200) return res.body()
-        return null
     }
 }
+
+fun <T> ArrayList<T>.push(t: T) = add(t)
+fun <T> ArrayList<T>.pop(): T? = removeLastOrNull()
+fun <T> ArrayList<T>.shift(): T? = removeFirstOrNull()
+fun <T> ArrayList<T>.unshift(t: T) = add(0, t)
