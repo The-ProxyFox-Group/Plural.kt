@@ -1,11 +1,11 @@
 package dev.proxyfox.pluralkt.types
 
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 
 @Serializable
 enum class AutoProxyMode {
-    OFF,
-    FRONT,
-    LATCH,
-    MEMBER
+    @SerialName("off") OFF,
+    @SerialName("front") FRONT,
+    @SerialName("latch") LATCH,
+    @SerialName("member") MEMBER
 }

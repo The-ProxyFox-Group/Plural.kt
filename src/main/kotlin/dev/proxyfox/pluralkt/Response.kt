@@ -2,7 +2,7 @@ package dev.proxyfox.pluralkt
 
 import dev.proxyfox.pluralkt.types.*
 
-interface Response<T : ApiType> {
+interface Response<T> {
     fun isSuccess(): Boolean
 
     fun getSuccess(): T
@@ -12,7 +12,7 @@ interface Response<T : ApiType> {
     fun getError(): ApiError
 }
 
-class ResponseSuccess<T : ApiType>(private val value: T) : Response<T> {
+class ResponseSuccess<T>(private val value: T) : Response<T> {
     override fun isSuccess(): Boolean = true
 
     override fun getSuccess(): T = value
@@ -22,7 +22,7 @@ class ResponseSuccess<T : ApiType>(private val value: T) : Response<T> {
     override fun getError(): ApiError = throw IllegalStateException("Response is not an error")
 }
 
-class ResponseError<T : ApiType>(private val error: ApiError) : Response<T> {
+class ResponseError<T>(private val error: ApiError) : Response<T> {
     override fun isSuccess(): Boolean = false
 
     override fun getSuccess(): T = throw IllegalStateException("Response is not a success")

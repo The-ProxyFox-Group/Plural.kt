@@ -23,6 +23,7 @@ object PluralKt {
             subclass(ApiSystemSettings::class)
             subclass(ApiSystem::class)
             subclass(ApiSwitch::class)
+            subclass(ApiFronter::class)
             subclass(ApiProxyTag::class)
             subclass(ApiMessage::class)
             subclass(ApiMember::class)
@@ -49,10 +50,58 @@ object PluralKt {
     private val scheduler = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors())
 
     fun getSystem(systemRef: PkReference, token: String? = null, onComplete: Response<ApiSystem>.() -> Unit) {
-        requestQueue.push(get("systems/$systemRef", token, onComplete))
+        requestQueue.push(get("systems/$systemRef", null, onComplete))
     }
 
-    private suspend fun <T : ApiType> completeRequest(request: Request<T>): HttpResponse {
+    fun updateSystem(systemRef: PkReference, system: ApiSystem, token: String, onComplete: Response<ApiSystem>.() -> Unit) {
+        requestQueue.push(patch("systems/$systemRef", system, token, onComplete))
+    }
+
+    fun getSystemSettings(systemRef: PkReference, token: String? = null, onComplete: Response<ApiSystemSettings>.() -> Unit) {
+        requestQueue.push(get("systems/$systemRef/settings", token, onComplete))
+    }
+
+    fun updateSystemSettings(systemRef: PkReference, settings: ApiSystemSettings, token: String, onComplete: Response<ApiSystemSettings>.() -> Unit) {
+        requestQueue.push(patch("systems/$systemRef/settings", settings, token, onComplete))
+    }
+
+    fun getSystemGuildSettings(guild: PkSnowflake, token: String, onComplete: Response<ApiGuildSystem>.() -> Unit) {
+        requestQueue.push(get("systems/@me/guilds/$guild", token, onComplete))
+    }
+
+    fun updateSystemGuildSettings(guild: PkSnowflake, settings: ApiGuildSystem, token: String, onComplete: Response<ApiGuildSystem>.() -> Unit) {
+        requestQueue.push(patch("systems/@me/guilds/$guild", settings, token, onComplete))
+    }
+
+    fun getAutoProxy(guild: PkSnowflake, token: String, onComplete: Response<ApiAutoProxy>.() -> Unit) {
+        requestQueue.push(get("systems/@me/autoproxy?guild_id=$guild", token, onComplete))
+    }
+
+    fun updateAutoProxy(guild: PkSnowflake, autoProxy: ApiAutoProxy, token: String, onComplete: Response<ApiAutoProxy>.() -> Unit) {
+        requestQueue.push(patch("systems/@me/autoproxy?guild_id=$guild", autoProxy, token, onComplete))
+    }
+
+    fun getMembers(systemRef: PkReference, token: String?, onComplete: Response<Array<ApiMember>>.() -> Unit) {
+        requestQueue.push(get("systems/$systemRef/members", token, onComplete))
+    }
+
+    fun createMember(member: ApiMember, token: String, onComplete: Response<ApiMember>.() -> Unit) {
+        requestQueue.push(post("members", member, token, onComplete))
+    }
+
+    fun getMember(memberRef: PkReference, token: String?, onComplete: Response<ApiMember>.() -> Unit) {
+        requestQueue.push(get("members/$memberRef", token, onComplete))
+    }
+
+    fun updateMember(memberRef: PkReference, member: ApiMember, token: String, onComplete: Response<ApiMember>.() -> Unit) {
+        requestQueue.push(patch("members/$memberRef", member, token, onComplete))
+    }
+
+    fun deleteMember(memberRef: PkReference, token: String, onComplete: Response<ApiMember>.() -> Unit) {
+        requestQueue.push(delete("members/$memberRef", token, onComplete))
+    }
+
+    private suspend fun <T> completeRequest(request: Request<T>): HttpResponse {
         val req = when (request.type) {
             RequestType.GET -> client.get(request.createUrl(baseUrl)) {
                 request.token?.let { header("Authorization", it) }
