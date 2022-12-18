@@ -84,7 +84,8 @@ object PluralKt {
             runBlocking {
                 try {
                     handleRequest()
-                } catch (_: Throwable) {
+                } catch (err: Throwable) {
+                    err.printStackTrace()
                     schedule(0)
                 }
             }
