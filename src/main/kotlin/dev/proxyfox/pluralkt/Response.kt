@@ -23,7 +23,7 @@ class ResponseSuccess<T : ApiType>(private val value: T) : Response<T> {
 }
 
 class ResponseError<T : ApiType>(private val error: ApiError) : Response<T> {
-    override fun isSuccess(): Boolean = true
+    override fun isSuccess(): Boolean = false
 
     override fun getSuccess(): T = throw IllegalStateException("Response is not a success")
 
