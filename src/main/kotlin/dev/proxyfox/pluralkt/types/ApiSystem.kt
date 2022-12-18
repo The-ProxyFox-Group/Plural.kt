@@ -1,9 +1,9 @@
 package dev.proxyfox.pluralkt.types
 
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 
 @Serializable
-class ApiSystem {
+class ApiSystem : ApiType {
     val id: PkId = ""
     val uuid: PkUuid = ""
     val created: PkTimestamp = ""
@@ -11,7 +11,8 @@ class ApiSystem {
     var description: String? = null
     var tag: String? = null
     var pronouns: String? = null
-    var avatar_url: String? = null
+    @SerialName("avatar_url")
+    var avatarUrl: String? = null
     var banner: String? = null
     var color: PkColor = ""
     var privacy: SystemPrivacy? = null
