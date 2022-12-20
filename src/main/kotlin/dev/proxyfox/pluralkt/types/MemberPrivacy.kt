@@ -1,9 +1,10 @@
 package dev.proxyfox.pluralkt.types
 
+import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class MemberPrivacy {
+class MemberPrivacy: ApiType {
     var visibility: PkPrivacy = null
     @SerialName("name_privacy")
     var name: PkPrivacy = null
@@ -17,4 +18,6 @@ class MemberPrivacy {
     var avatar: PkPrivacy = null
     @SerialName("metadata_privacy")
     var metadata: PkPrivacy = null
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

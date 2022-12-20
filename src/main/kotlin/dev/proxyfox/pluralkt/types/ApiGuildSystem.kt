@@ -1,5 +1,6 @@
 package dev.proxyfox.pluralkt.types
 
+import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
@@ -11,4 +12,6 @@ class ApiGuildSystem : ApiType {
     var tag: String? = null
     @SerialName("tag_enabled")
     var tagEnabled: Boolean = true
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

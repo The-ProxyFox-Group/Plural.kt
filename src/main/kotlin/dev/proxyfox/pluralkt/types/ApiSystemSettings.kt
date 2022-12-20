@@ -1,5 +1,6 @@
 package dev.proxyfox.pluralkt.types
 
+import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
@@ -17,4 +18,6 @@ class ApiSystemSettings : ApiType {
     var groupDefaultPrivate: Boolean = false
     @SerialName("show_private_info")
     var showPrivateInfo: Boolean = false
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

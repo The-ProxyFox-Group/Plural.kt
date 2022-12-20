@@ -1,6 +1,7 @@
 package dev.proxyfox.pluralkt.types
 
-import kotlinx.serialization.Serializable
+import dev.proxyfox.pluralkt.*
+import kotlinx.serialization.*
 
 @Serializable
 class ApiMessage : ApiType {
@@ -12,4 +13,6 @@ class ApiMessage : ApiType {
     val guild: PkSnowflake = ""
     val system: ApiSystem? = null
     val member: ApiMember? = null
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

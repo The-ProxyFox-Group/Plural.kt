@@ -32,9 +32,13 @@ object PluralKt {
             subclass(ApiGroup::class)
             subclass(ApiError::class)
             subclass(ApiAutoProxy::class)
+            subclass(AutoProxyMode::class)
+            subclass(ErrorObject::class)
+            subclass(MemberPrivacy::class)
+            subclass(SystemPrivacy::class)
         }
     }
-    private val json = Json {
+    val json = Json {
         serializersModule = module
         prettyPrint = true
         isLenient = true

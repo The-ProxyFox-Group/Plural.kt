@@ -1,12 +1,15 @@
 package dev.proxyfox.pluralkt.types
 
-import kotlinx.serialization.Serializable
+import dev.proxyfox.pluralkt.*
+import kotlinx.serialization.*
 
 @Serializable
 class ApiSwitch : ApiType {
     val id: PkUuid = ""
     var timestamp: PkTimestamp = ""
     var members: ArrayList<String> = arrayListOf()
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }
 
 @Serializable
@@ -14,6 +17,8 @@ class ApiFronter : ApiType {
     val id: PkUuid = ""
     var timestamp: PkTimestamp = ""
     var members: ArrayList<ApiMember> = arrayListOf()
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }
 
 class SwitchCreate(vararg members: PkReference) : ApiType {
@@ -22,4 +27,6 @@ class SwitchCreate(vararg members: PkReference) : ApiType {
     init {
         this.members = arrayListOf(*members)
     }
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

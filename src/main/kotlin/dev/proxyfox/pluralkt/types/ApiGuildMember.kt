@@ -1,5 +1,6 @@
 package dev.proxyfox.pluralkt.types
 
+import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
@@ -10,4 +11,6 @@ class ApiGuildMember : ApiType {
     var displayName: String? = null
     @SerialName("avatar_url")
     var avatarUrl: String? = null
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

@@ -1,5 +1,6 @@
 package dev.proxyfox.pluralkt.types
 
+import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
@@ -14,4 +15,6 @@ class ApiGroup : ApiType {
     var icon: String? = null
     var banner: String? = null
     var description: String? = null
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }

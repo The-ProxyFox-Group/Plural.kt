@@ -1,5 +1,6 @@
 package dev.proxyfox.pluralkt.types
 
+import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
@@ -28,4 +29,6 @@ class ApiMember : ApiType {
     @SerialName("last_message_timestamp")
     val lastMessage: PkTimestamp? = null
     var privacy: MemberPrivacy? = null
+
+    override fun toString(): String = PluralKt.json.encodeToString(this)
 }
