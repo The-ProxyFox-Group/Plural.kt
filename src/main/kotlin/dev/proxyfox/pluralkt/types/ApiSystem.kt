@@ -14,6 +14,6 @@ class ApiSystem : ApiType {
     @SerialName("avatar_url")
     var avatarUrl: String? = null
     var banner: String? = null
-    var color: PkColor = ""
+    var color: PkColor = null
     var privacy: SystemPrivacy? = null
 }

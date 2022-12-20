@@ -5,14 +5,19 @@ import kotlinx.serialization.json.*
 import kotlinx.serialization.*
 import kotlin.system.*
 
+val json = Json {
+    prettyPrint = true
+}
+
 fun main() {
-    PluralKt.getSystem("aaaaa") { // FAIL
-        println("aaaaa")
-        println(Json.encodeToString(this.getError()))
+    PluralKt.System.getSystem("aaaaa") { // FAIL
+        println("GET: aaaaa")
+        println("Success: "+this.isSuccess())
+        println("Data: "+json.encodeToString(this.getError()))
     }
-    PluralKt.getSystem(System.getenv("TEST_PKSYS")) { // SUCCESS
-        println(System.getenv("TEST_PKSYS"))
-        println(Json.encodeToString(this.getSuccess()))
-        exitProcess(0)
+    PluralKt.System.getSystem(System.getenv("TEST_PKSYS")) { // SUCCESS
+        println("GET: "+System.getenv("TEST_PKSYS"))
+        println("Success: "+this.isSuccess())
+        println("Data: "+json.encodeToString(this.getSuccess()))
     }
 }

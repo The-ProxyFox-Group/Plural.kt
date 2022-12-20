@@ -31,3 +31,13 @@ class ResponseError<T>(private val error: ApiError) : Response<T> {
 
     override fun getError(): ApiError = error
 }
+
+class ResponseNull<T> : Response<T> {
+    override fun isSuccess(): Boolean = false
+
+    override fun getSuccess(): T = throw IllegalStateException("Response is not a success")
+
+    override fun isError(): Boolean = false
+
+    override fun getError(): ApiError = throw IllegalStateException("Response is not an error")
+}
