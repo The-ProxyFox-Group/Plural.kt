@@ -17,20 +17,12 @@ fun main() {
     PluralKt.System.getSystem("aaaaa") { // FAIL
         println("GET: aaaaa")
         println("Success: "+this.isSuccess())
-        if (this.isSuccess())
-            println("Data: "+json.encodeToString(this.getSuccess()))
-        else if (this.isError())
-            println("Data: "+json.encodeToString(this.getError()))
-        else println("Data: Null")
+        println("Data: "+toString())
     }
     PluralKt.System.getSystem("exmpl") { // SUCCESS
         println("GET: exmpl")
         println("Success: "+this.isSuccess())
-        if (this.isSuccess())
-            println("Data: "+json.encodeToString(this.getSuccess()))
-        else if (this.isError())
-            println("Data: "+json.encodeToString(this.getError()))
-        else println("Data: Null")
+        println("Data: "+toString())
     }
 
     println(Json.encodeToString(ApiSystem()))
