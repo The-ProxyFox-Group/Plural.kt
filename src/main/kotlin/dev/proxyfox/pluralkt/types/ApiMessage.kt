@@ -1,11 +1,13 @@
 package dev.proxyfox.pluralkt.types
 
 import dev.proxyfox.pluralkt.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 
 @Serializable
 class ApiMessage : ApiType {
-    val timestamp: PkTimestamp = ""
+    val timestamp: Instant = Clock.System.now()
     val id: PkSnowflake = ""
     val original: PkSnowflake = ""
     val sender: PkSnowflake = ""

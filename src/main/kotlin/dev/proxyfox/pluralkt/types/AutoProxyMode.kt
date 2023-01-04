@@ -4,7 +4,7 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-enum class AutoProxyMode : ApiType {
+enum class AutoProxyMode {
     @SerialName("off") OFF,
     @SerialName("front") FRONT,
     @SerialName("latch") LATCH,

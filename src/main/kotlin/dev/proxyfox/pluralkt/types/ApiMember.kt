@@ -1,17 +1,19 @@
 package dev.proxyfox.pluralkt.types
 
 import dev.proxyfox.pluralkt.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 
 @Serializable
 class ApiMember : ApiType {
     val id: PkId = ""
     val uuid: PkUuid = ""
-    val created: PkTimestamp = ""
+    val created: Instant = Clock.System.now()
     var name: String = ""
     @SerialName("display_name")
     var displayName: String? = null
-    var color: PkColor = null
+    var color: PkColor? = null
     var birthday: String? = null
     var pronouns: String? = null
     @SerialName("avatar_url")
@@ -27,7 +29,7 @@ class ApiMember : ApiType {
     @SerialName("message_count")
     val messageCount: Int? = null
     @SerialName("last_message_timestamp")
-    val lastMessage: PkTimestamp? = null
+    val lastMessage: Instant? = null
     var privacy: MemberPrivacy? = null
 
     override fun toString(): String = PluralKt.json.encodeToString(this)

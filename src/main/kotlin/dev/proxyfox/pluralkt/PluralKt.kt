@@ -11,6 +11,8 @@ import io.ktor.client.statement.*
 import io.ktor.serialization.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
+import kotlinx.datetime.Instant
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
 import java.util.concurrent.*
@@ -32,10 +34,8 @@ object PluralKt {
             subclass(ApiGroup::class)
             subclass(ApiError::class)
             subclass(ApiAutoProxy::class)
-            subclass(AutoProxyMode::class)
             subclass(ErrorObject::class)
-            subclass(MemberPrivacy::class)
-            subclass(SystemPrivacy::class)
+            subclass(PkColor::class)
         }
     }
     val json = Json {
@@ -74,7 +74,8 @@ object PluralKt {
         }
         try {
             request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
-        } catch (_: JsonConvertException) {
+        } catch (err: JsonConvertException) {
+            err.printStackTrace()
             try {
                 request.onComplete(ResponseError(req.body()))
             } catch (_: JsonConvertException) {
@@ -230,7 +231,7 @@ object PluralKt {
     }
 
     object Switch {
-        fun getSwitches(systemRef: PkReference, before: PkTimestamp, limit: Int = 100, token: String? = null, onComplete: Response<Array<ApiSwitch>>.() -> Unit) {
+        fun getSwitches(systemRef: PkReference, before: Instant, limit: Int = 100, token: String? = null, onComplete: Response<Array<ApiSwitch>>.() -> Unit) {
             if (limit > 100) throw IllegalArgumentException("Limit cannot be greater than 100.")
             requestQueue.push(get("systems/$systemRef/switches?$before&$limit", token, onComplete))
         }

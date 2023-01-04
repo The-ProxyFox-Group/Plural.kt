@@ -6,17 +6,17 @@ import kotlinx.serialization.*
 @Serializable
 class SystemPrivacy : ApiType {
     @SerialName("description_privacy")
-    var description: PkPrivacy = null
+    var description: PkPrivacy? = null
     @SerialName("pronoun_privacy")
-    var pronoun: PkPrivacy = null
+    var pronoun: PkPrivacy? = null
     @SerialName("member_list_privacy")
-    var memberList: PkPrivacy = null
+    var memberList: PkPrivacy? = null
     @SerialName("group_list_privacy")
-    var groupList: PkPrivacy = null
+    var groupList: PkPrivacy? = null
     @SerialName("front_privacy")
-    var front: PkPrivacy = null
+    var front: PkPrivacy? = null
     @SerialName("front_history_privacy")
-    var frontHistory: PkPrivacy = null
+    var frontHistory: PkPrivacy? = null
 
     override fun toString(): String = PluralKt.json.encodeToString(this)
 }
