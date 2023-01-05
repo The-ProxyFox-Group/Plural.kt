@@ -21,7 +21,7 @@ object PluralKt {
     private const val baseUrl = "https://api.pluralkit.me/v2/"
     private val module = SerializersModule {
         polymorphic(PkType::class) {
-            subclass(ErrorObject::class)
+            subclass(PkErrorMessage::class)
             subclass(PkAutoProxy::class)
             subclass(PkColor::class)
             subclass(PkError::class)

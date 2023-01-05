@@ -4,7 +4,7 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class ErrorObject : PkType {
+class PkErrorMessage : PkType {
     val message: String = ""
     @SerialName("max_length")
     val maxLength: Int? = null

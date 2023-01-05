@@ -7,7 +7,7 @@ import kotlinx.serialization.*
 class PkError : PkType {
     val code: Int = 0
     val message: String = ""
-    val errors: HashMap<String, ErrorObject>? = null
+    val errors: HashMap<String, PkErrorMessage>? = null
     @SerialName("retry_after")
     val retryAfter: Int? = null
 
