@@ -12,7 +12,6 @@ import io.ktor.serialization.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import kotlinx.datetime.Instant
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.*
 import java.util.concurrent.*
@@ -21,21 +20,23 @@ object PluralKt {
     private val requestQueue: ArrayList<Request<*, *>> = arrayListOf()
     private const val baseUrl = "https://api.pluralkit.me/v2/"
     private val module = SerializersModule {
-        polymorphic(ApiType::class) {
-            subclass(ApiSystemSettings::class)
-            subclass(ApiSystem::class)
-            subclass(ApiSwitch::class)
-            subclass(ApiFronter::class)
-            subclass(ApiProxyTag::class)
-            subclass(ApiMessage::class)
-            subclass(ApiMember::class)
-            subclass(ApiGuildSystem::class)
-            subclass(ApiGuildMember::class)
-            subclass(ApiGroup::class)
-            subclass(ApiError::class)
-            subclass(ApiAutoProxy::class)
+        polymorphic(PkType::class) {
             subclass(ErrorObject::class)
+            subclass(PkAutoProxy::class)
             subclass(PkColor::class)
+            subclass(PkError::class)
+            subclass(PkGroup::class)
+            subclass(PkGuildMember::class)
+            subclass(PkGuildSystem::class)
+            subclass(PkMember::class)
+            subclass(PkMemberPrivacy::class)
+            subclass(PkMessage::class)
+            subclass(PkProxyTag::class)
+            subclass(PkSwitch::class)
+            subclass(PkFronter::class)
+            subclass(PkSystem::class)
+            subclass(PkSystemPrivacy::class)
+            subclass(PkSystemSettings::class)
         }
     }
     val json = Json {
@@ -114,61 +115,61 @@ object PluralKt {
     }
 
     object System {
-        fun getSystem(systemRef: PkReference, token: String? = null, onComplete: Response<ApiSystem>.() -> Unit) {
+        fun getSystem(systemRef: PkReference, token: String? = null, onComplete: Response<PkSystem>.() -> Unit) {
             requestQueue.push(get("systems/$systemRef", null, onComplete))
         }
 
-        fun updateSystem(system: ApiSystem, token: String, onComplete: Response<ApiSystem>.() -> Unit) {
+        fun updateSystem(system: PkSystem, token: String, onComplete: Response<PkSystem>.() -> Unit) {
             requestQueue.push(patch("systems/@me", system, token, onComplete))
         }
 
-        fun getSystemSettings(systemRef: PkReference, token: String? = null, onComplete: Response<ApiSystemSettings>.() -> Unit) {
+        fun getSystemSettings(systemRef: PkReference, token: String? = null, onComplete: Response<PkSystemSettings>.() -> Unit) {
             requestQueue.push(get("systems/$systemRef/settings", token, onComplete))
         }
 
-        fun updateSystemSettings(settings: ApiSystemSettings, token: String, onComplete: Response<ApiSystemSettings>.() -> Unit) {
+        fun updateSystemSettings(settings: PkSystemSettings, token: String, onComplete: Response<PkSystemSettings>.() -> Unit) {
             requestQueue.push(patch("systems/@me/settings", settings, token, onComplete))
         }
 
-        fun getSystemGuildSettings(guild: PkSnowflake, token: String, onComplete: Response<ApiGuildSystem>.() -> Unit) {
+        fun getSystemGuildSettings(guild: PkSnowflake, token: String, onComplete: Response<PkGuildSystem>.() -> Unit) {
             requestQueue.push(get("systems/@me/guilds/$guild", token, onComplete))
         }
 
-        fun updateSystemGuildSettings(guild: PkSnowflake, settings: ApiGuildSystem, token: String, onComplete: Response<ApiGuildSystem>.() -> Unit) {
+        fun updateSystemGuildSettings(guild: PkSnowflake, settings: PkGuildSystem, token: String, onComplete: Response<PkGuildSystem>.() -> Unit) {
             requestQueue.push(patch("systems/@me/guilds/$guild", settings, token, onComplete))
         }
 
-        fun getAutoProxy(guild: PkSnowflake, token: String, onComplete: Response<ApiAutoProxy>.() -> Unit) {
+        fun getAutoProxy(guild: PkSnowflake, token: String, onComplete: Response<PkAutoProxy>.() -> Unit) {
             requestQueue.push(get("systems/@me/autoproxy?guild_id=$guild", token, onComplete))
         }
 
-        fun updateAutoProxy(guild: PkSnowflake, autoProxy: ApiAutoProxy, token: String, onComplete: Response<ApiAutoProxy>.() -> Unit) {
+        fun updateAutoProxy(guild: PkSnowflake, autoProxy: PkAutoProxy, token: String, onComplete: Response<PkAutoProxy>.() -> Unit) {
             requestQueue.push(patch("systems/@me/autoproxy?guild_id=$guild", autoProxy, token, onComplete))
         }
     }
 
     object Member {
-        fun getMembers(systemRef: PkReference, token: String? = null, onComplete: Response<Array<ApiMember>>.() -> Unit) {
+        fun getMembers(systemRef: PkReference, token: String? = null, onComplete: Response<Array<PkMember>>.() -> Unit) {
             requestQueue.push(get("systems/$systemRef/members", token, onComplete))
         }
 
-        fun createMember(member: ApiMember, token: String, onComplete: Response<ApiMember>.() -> Unit) {
+        fun createMember(member: PkMember, token: String, onComplete: Response<PkMember>.() -> Unit) {
             requestQueue.push(post("members", member, token, onComplete))
         }
 
-        fun getMember(memberRef: PkReference, token: String? = null, onComplete: Response<ApiMember>.() -> Unit) {
+        fun getMember(memberRef: PkReference, token: String? = null, onComplete: Response<PkMember>.() -> Unit) {
             requestQueue.push(get("members/$memberRef", token, onComplete))
         }
 
-        fun updateMember(memberRef: PkReference, member: ApiMember, token: String, onComplete: Response<ApiMember>.() -> Unit) {
+        fun updateMember(memberRef: PkReference, member: PkMember, token: String, onComplete: Response<PkMember>.() -> Unit) {
             requestQueue.push(patch("members/$memberRef", member, token, onComplete))
         }
 
-        fun deleteMember(memberRef: PkReference, token: String, onComplete: Response<ApiMember>.() -> Unit) {
+        fun deleteMember(memberRef: PkReference, token: String, onComplete: Response<PkMember>.() -> Unit) {
             requestQueue.push(delete("members/$memberRef", token, onComplete))
         }
 
-        fun getMemberGroups(memberRef: PkReference, token: String? = null, onComplete: Response<Array<ApiGroup>>.() -> Unit) {
+        fun getMemberGroups(memberRef: PkReference, token: String? = null, onComplete: Response<Array<PkGroup>>.() -> Unit) {
             requestQueue.push(get("members/$memberRef/groups", token, onComplete))
         }
 
@@ -184,37 +185,37 @@ object PluralKt {
             requestQueue.push(post("members/$memberRef/groups/overwrite", groups, token, onComplete))
         }
 
-        fun getMemberGuild(memberRef: PkReference, guild: PkSnowflake, token: String? = null, onComplete: Response<ApiMember>.() -> Unit) {
+        fun getMemberGuild(memberRef: PkReference, guild: PkSnowflake, token: String? = null, onComplete: Response<PkMember>.() -> Unit) {
             requestQueue.push(get("members/$memberRef/guilds/$guild", token, onComplete))
         }
 
-        fun updateMemberGuild(memberRef: PkReference, guild: PkSnowflake, member: ApiGuildMember, token: String, onComplete: Response<ApiGuildMember>.() -> Unit) {
+        fun updateMemberGuild(memberRef: PkReference, guild: PkSnowflake, member: PkGuildMember, token: String, onComplete: Response<PkGuildMember>.() -> Unit) {
             requestQueue.push(patch("members/$memberRef/guilds/$guild", member, token, onComplete))
         }
     }
 
     object Group {
-        fun getGroups(systemRef: PkReference, token: String? = null, onComplete: Response<Array<ApiGroup>>.() -> Unit) {
+        fun getGroups(systemRef: PkReference, token: String? = null, onComplete: Response<Array<PkGroup>>.() -> Unit) {
             requestQueue.push(get("systems/$systemRef/groups", token, onComplete))
         }
 
-        fun createGroup(group: ApiGroup, token: String, onComplete: Response<ApiGroup>.() -> Unit) {
+        fun createGroup(group: PkGroup, token: String, onComplete: Response<PkGroup>.() -> Unit) {
             requestQueue.push(post("groups", group, token, onComplete))
         }
 
-        fun getGroup(groupRef: PkReference, token: String? = null, onComplete: Response<ApiGroup>.() -> Unit) {
+        fun getGroup(groupRef: PkReference, token: String? = null, onComplete: Response<PkGroup>.() -> Unit) {
             requestQueue.push(get("groups/$groupRef", token, onComplete))
         }
 
-        fun updateGroup(groupRef: PkReference, group: ApiGroup, token: String, onComplete: Response<ApiGroup>.() -> Unit) {
+        fun updateGroup(groupRef: PkReference, group: PkGroup, token: String, onComplete: Response<PkGroup>.() -> Unit) {
             requestQueue.push(patch("groups/$groupRef", group, token, onComplete))
         }
 
-        fun deleteGroup(groupRef: PkReference, token: String, onComplete: Response<ApiGroup>.() -> Unit) {
+        fun deleteGroup(groupRef: PkReference, token: String, onComplete: Response<PkGroup>.() -> Unit) {
             requestQueue.push(delete("groups/$groupRef", token, onComplete))
         }
 
-        fun getGroupMembers(groupRef: PkReference, token: String? = null, onComplete: Response<Array<ApiMember>>.() -> Unit) {
+        fun getGroupMembers(groupRef: PkReference, token: String? = null, onComplete: Response<Array<PkMember>>.() -> Unit) {
             requestQueue.push(get("groups/$groupRef/members", token, onComplete))
         }
 
@@ -232,38 +233,38 @@ object PluralKt {
     }
 
     object Switch {
-        fun getSwitches(systemRef: PkReference, before: Instant, limit: Int = 100, token: String? = null, onComplete: Response<Array<ApiSwitch>>.() -> Unit) {
+        fun getSwitches(systemRef: PkReference, before: Instant, limit: Int = 100, token: String? = null, onComplete: Response<Array<PkSwitch>>.() -> Unit) {
             if (limit > 100) throw IllegalArgumentException("Limit cannot be greater than 100.")
             requestQueue.push(get("systems/$systemRef/switches?$before&$limit", token, onComplete))
         }
 
-        fun getFronters(systemRef: PkReference, token: String? = null, onComplete: Response<ApiFronter>.() -> Unit) {
+        fun getFronters(systemRef: PkReference, token: String? = null, onComplete: Response<PkFronter>.() -> Unit) {
             requestQueue.push(get("systems/$systemRef/fronters", token, onComplete))
         }
 
-        fun createSwitch(create: SwitchCreate, token: String, onComplete: Response<ApiFronter>.() -> Unit) {
+        fun createSwitch(create: SwitchCreate, token: String, onComplete: Response<PkFronter>.() -> Unit) {
             requestQueue.push(post("systems/@me/switches", create, token, onComplete))
         }
 
-        fun getSwitch(systemRef: PkReference, switchRef: PkReference, token: String? = null, onComplete: Response<ApiFronter>.() -> Unit) {
+        fun getSwitch(systemRef: PkReference, switchRef: PkReference, token: String? = null, onComplete: Response<PkFronter>.() -> Unit) {
             requestQueue.push(get("systems/$systemRef/switches/$switchRef", token, onComplete))
         }
 
-        fun updateSwitch(systemRef: PkReference, switchRef: PkReference, switch: SwitchCreate, token: String, onComplete: Response<ApiFronter>.() -> Unit) {
+        fun updateSwitch(systemRef: PkReference, switchRef: PkReference, switch: SwitchCreate, token: String, onComplete: Response<PkFronter>.() -> Unit) {
             requestQueue.push(patch("systems/$systemRef/switches/$switchRef", switch, token, onComplete))
         }
 
-        fun deleteSwitch(systemRef: PkReference, switchRef: PkReference, token: String, onComplete: Response<ApiFronter>.() -> Unit) {
+        fun deleteSwitch(systemRef: PkReference, switchRef: PkReference, token: String, onComplete: Response<PkFronter>.() -> Unit) {
             requestQueue.push(delete("systems/$systemRef/switches/$switchRef", token, onComplete))
         }
 
-        fun updateSwitchMembers(systemRef: PkReference, switchRef: PkReference, members: Array<PkReference>, token: String, onComplete: Response<ApiFronter>.() -> Unit) {
+        fun updateSwitchMembers(systemRef: PkReference, switchRef: PkReference, members: Array<PkReference>, token: String, onComplete: Response<PkFronter>.() -> Unit) {
             requestQueue.push(patch("systems/$systemRef/switches/$switchRef/members", members, token, onComplete))
         }
     }
 
     object Misc {
-        fun getMessage(message: PkSnowflake, token: String? = null, onComplete: Response<ApiMessage>.() -> Unit) {
+        fun getMessage(message: PkSnowflake, token: String? = null, onComplete: Response<PkMessage>.() -> Unit) {
             requestQueue.push(get("messages/$message", token, onComplete))
         }
     }

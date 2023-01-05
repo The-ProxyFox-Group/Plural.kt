@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 
 @Serializable
-class ApiSystem : ApiType {
+class PkSystem : PkType {
     val id: PkId = ""
     val uuid: PkUuid = ""
     val created: Instant = Clock.System.now()
@@ -18,7 +18,7 @@ class ApiSystem : ApiType {
     var avatarUrl: String? = null
     var banner: String? = null
     var color: PkColor? = null
-    var privacy: SystemPrivacy? = null
+    var privacy: PkSystemPrivacy? = null
 
     override fun toString(): String = PluralKt.json.encodeToString(this)
 }

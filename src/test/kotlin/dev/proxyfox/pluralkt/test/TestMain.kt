@@ -1,13 +1,9 @@
 package dev.proxyfox.pluralkt.test
 
 import dev.proxyfox.pluralkt.*
-import dev.proxyfox.pluralkt.types.ApiSystem
-import dev.proxyfox.pluralkt.types.PkColor
-import kotlinx.datetime.Clock
+import dev.proxyfox.pluralkt.types.PkSystem
 import kotlinx.serialization.json.*
 import kotlinx.serialization.*
-import java.util.*
-import kotlin.system.*
 
 val json = Json {
     prettyPrint = true
@@ -25,5 +21,5 @@ fun main() {
         println("Data: "+toString())
     }
 
-    println(Json.encodeToString(ApiSystem()))
+    println(Json.encodeToString(PkSystem()))
 }

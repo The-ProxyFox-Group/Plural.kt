@@ -4,13 +4,14 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class ApiGuildMember : ApiType {
+class PkGuildSystem : PkType {
     @SerialName("guild_id")
     val guildId: PkSnowflake = ""
-    @SerialName("display_name")
-    var displayName: String? = null
-    @SerialName("avatar_url")
-    var avatarUrl: String? = null
+    @SerialName("proxying_enabled")
+    var proxyingEnabled: Boolean = true
+    var tag: String? = null
+    @SerialName("tag_enabled")
+    var tagEnabled: Boolean = true
 
     override fun toString(): String = PluralKt.json.encodeToString(this)
 }

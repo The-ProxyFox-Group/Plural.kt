@@ -4,7 +4,7 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class ApiError : ApiType {
+class PkError : PkType {
     val code: Int = 0
     val message: String = ""
     val errors: HashMap<String, ErrorObject>? = null

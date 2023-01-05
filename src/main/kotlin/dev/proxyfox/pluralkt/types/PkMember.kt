@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 
 @Serializable
-class ApiMember : ApiType {
+class PkMember : PkType {
     val id: PkId = ""
     val uuid: PkUuid = ""
     val created: Instant = Clock.System.now()
@@ -21,7 +21,7 @@ class ApiMember : ApiType {
     var banner: String? = null
     var description: String? = null
     @SerialName("proxy_tags")
-    var proxyTags: ArrayList<ApiProxyTag> = arrayListOf()
+    var proxyTags: ArrayList<PkProxyTag> = arrayListOf()
     @SerialName("keep_proxy")
     var keepProxy: Boolean = false
     @SerialName("autoproxy_enabled")
@@ -30,7 +30,7 @@ class ApiMember : ApiType {
     val messageCount: Int? = null
     @SerialName("last_message_timestamp")
     val lastMessage: Instant? = null
-    var privacy: MemberPrivacy? = null
+    var privacy: PkMemberPrivacy? = null
 
     override fun toString(): String = PluralKt.json.encodeToString(this)
 }

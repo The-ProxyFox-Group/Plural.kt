@@ -4,7 +4,7 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class ApiSystemSettings : ApiType {
+class PkSystemSettings : PkType {
     @SerialName("member_limit")
     val memberLimit: Int = 1000
     @SerialName("group_limit")

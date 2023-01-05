@@ -4,7 +4,7 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class ApiProxyTag : ApiType {
+class PkProxyTag : PkType {
     var prefix: String? = null
     var suffix: String? = null
 

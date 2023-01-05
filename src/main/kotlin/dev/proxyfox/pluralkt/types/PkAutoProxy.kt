@@ -1,15 +1,14 @@
 package dev.proxyfox.pluralkt.types
 
 import dev.proxyfox.pluralkt.*
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 
 @Serializable
-class ApiAutoProxy : ApiType {
+class PkAutoProxy : PkType {
     val lastLatchTimestamp: Instant? = null
     @SerialName("autoproxy_mode")
-    var autoProxyMode: AutoProxyMode = AutoProxyMode.OFF
+    var autoProxyMode: PkProxyMode = PkProxyMode.OFF
     var autoProxyMember: PkId? = null
 
     override fun toString(): String = PluralKt.json.encodeToString(this)

@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.*
 
 @Serializable
-class ApiGroup : ApiType {
+class PkGroup : PkType {
     val id: PkId = ""
     val uuid: PkUuid = ""
     val created: Instant = Clock.System.now()

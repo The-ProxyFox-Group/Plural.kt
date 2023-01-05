@@ -4,7 +4,7 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.serialization.*
 
 @Serializable
-class MemberPrivacy : ApiType {
+class PkMemberPrivacy : PkType {
     var visibility: PkPrivacy? = null
     @SerialName("name_privacy")
     var name: PkPrivacy? = null
