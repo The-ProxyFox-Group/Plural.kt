@@ -125,8 +125,12 @@ object PluralKt {
     }
 
     object System {
+        fun getMe(token: String, onComplete: Response<PkSystem>.() -> Unit) {
+            push(get("systems/@me", token, onComplete))
+        }
+
         fun getSystem(systemRef: PkReference, token: String? = null, onComplete: Response<PkSystem>.() -> Unit) {
-            push(get("systems/$systemRef", null, onComplete))
+            push(get("systems/$systemRef", token, onComplete))
         }
 
         fun updateSystem(system: PkSystem, token: String, onComplete: Response<PkSystem>.() -> Unit) {
