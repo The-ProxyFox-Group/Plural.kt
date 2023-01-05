@@ -4,10 +4,12 @@ import dev.proxyfox.pluralkt.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Serializable
 class PkSwitch : PkType {
-    val id: PkUuid = ""
+    val id: PkUuid = PkUuid(UUID(0,0))
     var timestamp: Instant = Clock.System.now()
     var members: ArrayList<String> = arrayListOf()
 
@@ -16,7 +18,7 @@ class PkSwitch : PkType {
 
 @Serializable
 class PkFronter : PkType {
-    val id: PkUuid = ""
+    val id: PkUuid = PkUuid(UUID(0,0))
     var timestamp: Instant = Clock.System.now()
     var members: ArrayList<PkMember> = arrayListOf()
 

@@ -8,11 +8,11 @@ import kotlinx.serialization.*
 @Serializable
 class PkMessage : PkType {
     val timestamp: Instant = Clock.System.now()
-    val id: PkSnowflake = ""
-    val original: PkSnowflake = ""
-    val sender: PkSnowflake = ""
-    val channel: PkSnowflake = ""
-    val guild: PkSnowflake = ""
+    val id: PkSnowflake = PkSnowflake(0UL)
+    val original: PkSnowflake = PkSnowflake(0UL)
+    val sender: PkSnowflake = PkSnowflake(0UL)
+    val channel: PkSnowflake = PkSnowflake(0UL)
+    val guild: PkSnowflake = PkSnowflake(0UL)
     val system: PkSystem? = null
     val member: PkMember? = null
 

@@ -6,7 +6,7 @@ import kotlinx.serialization.*
 @Serializable
 class PkGuildSystem : PkType {
     @SerialName("guild_id")
-    val guildId: PkSnowflake = ""
+    val guildId: PkSnowflake = PkSnowflake(0UL)
     @SerialName("proxying_enabled")
     var proxyingEnabled: Boolean = true
     var tag: String? = null

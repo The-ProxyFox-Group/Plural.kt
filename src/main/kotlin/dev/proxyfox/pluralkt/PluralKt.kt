@@ -75,9 +75,7 @@ object PluralKt {
         }
         try {
             request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
-        } catch (err: JsonConvertException) {
-            // Here for debugging. TODO: Remove before release
-            err.printStackTrace()
+        } catch (_: JsonConvertException) {
             try {
                 request.onComplete(ResponseError(req.body()))
             } catch (_: JsonConvertException) {
