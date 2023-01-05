@@ -17,6 +17,6 @@ repositories {
 
 ```kts
 dependencies {
-    implementation("dev.proxyfox:pluralkt:1.0")
+    implementation("dev.proxyfox:pluralkt:$pluralkt_version") //Define a variable called `pluralkt_version` and set it to the latest release version
 }
 ```
