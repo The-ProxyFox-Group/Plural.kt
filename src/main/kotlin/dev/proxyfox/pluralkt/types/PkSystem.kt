@@ -20,6 +20,8 @@ class PkSystem : PkType {
     var banner: String? = null
     var color: PkColor? = null
     var privacy: PkSystemPrivacy? = null
+    @SerialName("webhook_url")
+    var webhookUrl: String? = null
 
     override fun toString(): String = PluralKt.json.encodeToString(this)
 }
