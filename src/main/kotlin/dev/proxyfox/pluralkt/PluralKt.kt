@@ -43,6 +43,7 @@ object PluralKt {
         serializersModule = module
         prettyPrint = true
         isLenient = true
+        ignoreUnknownKeys = true
     }
     private val client = HttpClient(CIO) {
         install(UserAgent) {
