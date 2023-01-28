@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
 class PkMember : PkType {
     val id: PkId = ""
     val uuid: PkUuid = PkUuid(UUID(0,0))
-    val created: Instant = Clock.System.now()
+    val created: Instant? = null
     var name: String = ""
     @SerialName("display_name")
     var displayName: String? = null

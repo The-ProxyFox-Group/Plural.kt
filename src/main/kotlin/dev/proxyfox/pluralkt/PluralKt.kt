@@ -78,11 +78,12 @@ object PluralKt {
         }
         try {
             request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
-        } catch (_: JsonConvertException) {
+        } catch (a: JsonConvertException) {
             try {
-                request.onComplete(ResponseError(req.body()))
-            } catch (_: JsonConvertException) {
-                request.onComplete(ResponseNull())
+                request.onComplete(ResponseError(req.body(), a))
+            } catch (b: JsonConvertException) {
+                b.addSuppressed(a)
+                request.onComplete(ResponseNull(b))
             }
         }
         return req

@@ -1,6 +1,7 @@
 package dev.proxyfox.pluralkt
 
 import dev.proxyfox.pluralkt.types.*
+import io.ktor.serialization.*
 
 interface Response<T> {
     fun isSuccess(): Boolean
@@ -10,6 +11,8 @@ interface Response<T> {
     fun isError(): Boolean
 
     fun getError(): PkError
+
+    fun getException(): JsonConvertException
 
     override fun toString(): String
 }
@@ -22,11 +25,12 @@ class ResponseSuccess<T>(private val value: T) : Response<T> {
     override fun isError(): Boolean = false
 
     override fun getError(): PkError = throw IllegalStateException("Response is not an error")
+    override fun getException(): JsonConvertException = throw IllegalStateException("Response is not an error")
 
     override fun toString(): String = value.toString()
 }
 
-class ResponseError<T>(private val error: PkError) : Response<T> {
+class ResponseError<T>(private val error: PkError, private val exception: JsonConvertException) : Response<T> {
     override fun isSuccess(): Boolean = false
 
     override fun getSuccess(): T = throw IllegalStateException("Response is not a success")
@@ -35,10 +39,12 @@ class ResponseError<T>(private val error: PkError) : Response<T> {
 
     override fun getError(): PkError = error
 
+    override fun getException(): JsonConvertException = exception
+
     override fun toString(): String = error.toString()
 }
 
-class ResponseNull<T> : Response<T> {
+class ResponseNull<T>(private val exception: JsonConvertException) : Response<T> {
     override fun isSuccess(): Boolean = false
 
     override fun getSuccess(): T = throw IllegalStateException("Response is not a success")
@@ -46,6 +52,8 @@ class ResponseNull<T> : Response<T> {
     override fun isError(): Boolean = false
 
     override fun getError(): PkError = throw IllegalStateException("Response is not an error")
+
+    override fun getException(): JsonConvertException = exception
 
     override fun toString(): String = "null"
 }
