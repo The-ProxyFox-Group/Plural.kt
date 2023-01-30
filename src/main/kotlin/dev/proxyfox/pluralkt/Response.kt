@@ -12,7 +12,7 @@ interface Response<T> {
 
     fun getError(): PkError
 
-    fun getException(): JsonConvertException
+    fun getException(): JsonConvertException?
 
     override fun toString(): String
 }
@@ -30,7 +30,7 @@ class ResponseSuccess<T>(private val value: T) : Response<T> {
     override fun toString(): String = value.toString()
 }
 
-class ResponseError<T>(private val error: PkError, private val exception: JsonConvertException) : Response<T> {
+class ResponseError<T>(private val error: PkError, private val exception: JsonConvertException? = null) : Response<T> {
     override fun isSuccess(): Boolean = false
 
     override fun getSuccess(): T = throw IllegalStateException("Response is not a success")
@@ -39,7 +39,7 @@ class ResponseError<T>(private val error: PkError, private val exception: JsonCo
 
     override fun getError(): PkError = error
 
-    override fun getException(): JsonConvertException = exception
+    override fun getException(): JsonConvertException? = exception
 
     override fun toString(): String = error.toString()
 }
