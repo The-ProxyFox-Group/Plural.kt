@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.proxyfox"
-version = "1.5"
+version = "1.6"
 val ktor_version = "2.1.0"
 
 repositories {
@@ -25,6 +25,11 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+}
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.isDeprecation = true
+    options.release.set(17)
 }
 
 publishing {
