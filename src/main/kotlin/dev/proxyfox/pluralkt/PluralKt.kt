@@ -76,16 +76,25 @@ object PluralKt {
                 request.token?.let { header("Authorization", it) }
             }
         }
-        try {
-            request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
-        } catch (a: JsonConvertException) {
+        if (req.status.value == 200) {
             try {
-                request.onComplete(ResponseError(req.body(), a))
+                request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
+            } catch (a: JsonConvertException) {
+                try {
+                    request.onComplete(ResponseError(req.body(), a))
+                } catch (b: JsonConvertException) {
+                    b.addSuppressed(a)
+                    request.onComplete(ResponseNull(b))
+                }
+            }
+        } else {
+            try {
+                request.onComplete(ResponseError(req.body()))
             } catch (b: JsonConvertException) {
-                b.addSuppressed(a)
                 request.onComplete(ResponseNull(b))
             }
         }
+
         return req
     }
 
@@ -117,171 +126,172 @@ object PluralKt {
         schedule(1000/res.headers["x-ratelimit-limit"]!!.toLong())
     }
 
-    fun <I, O> push(request: Request<I, O>) {
+    fun <I, O> push(request: Request<I, O>): Request<I, O> {
         requestQueue.push(request)
         if (!active) {
             active = true
             scheduler = Executors.newScheduledThreadPool(1)
             schedule(tmpDelay)
         }
+        return request
     }
 
     object System {
-        fun getMe(token: String, onComplete: Response<PkSystem>.() -> Unit) {
-            push(get("systems/@me", token, onComplete))
+        fun getMe(token: String): Request<PkType, PkSystem> {
+            return push(get("systems/@me", token))
         }
 
-        fun getSystem(systemRef: PkReference, token: String? = null, onComplete: Response<PkSystem>.() -> Unit) {
-            push(get("systems/$systemRef", token, onComplete))
+        fun getSystem(systemRef: PkReference, token: String? = null): Request<PkType, PkSystem> {
+            return push(get("systems/$systemRef", token))
         }
 
-        fun updateSystem(system: PkSystem, token: String, onComplete: Response<PkSystem>.() -> Unit) {
-            push(patch("systems/@me", system, token, onComplete))
+        fun updateSystem(system: PkSystem, token: String): Request<PkSystem, PkSystem> {
+            return push(patch("systems/@me", system, token))
         }
 
-        fun getSystemSettings(systemRef: PkReference, token: String? = null, onComplete: Response<PkSystemSettings>.() -> Unit) {
-            push(get("systems/$systemRef/settings", token, onComplete))
+        fun getSystemSettings(systemRef: PkReference, token: String? = null): Request<PkType, PkSystemSettings> {
+            return push(get("systems/$systemRef/settings", token))
         }
 
-        fun updateSystemSettings(settings: PkSystemSettings, token: String, onComplete: Response<PkSystemSettings>.() -> Unit) {
-            push(patch("systems/@me/settings", settings, token, onComplete))
+        fun updateSystemSettings(settings: PkSystemSettings, token: String): Request<PkSystemSettings, PkSystemSettings> {
+            return push(patch("systems/@me/settings", settings, token))
         }
 
-        fun getSystemGuildSettings(guild: PkSnowflake, token: String, onComplete: Response<PkGuildSystem>.() -> Unit) {
-            push(get("systems/@me/guilds/$guild", token, onComplete))
+        fun getSystemGuildSettings(guild: PkSnowflake, token: String): Request<PkType, PkGuildSystem> {
+            return push(get("systems/@me/guilds/$guild", token))
         }
 
-        fun updateSystemGuildSettings(guild: PkSnowflake, settings: PkGuildSystem, token: String, onComplete: Response<PkGuildSystem>.() -> Unit) {
-            push(patch("systems/@me/guilds/$guild", settings, token, onComplete))
+        fun updateSystemGuildSettings(guild: PkSnowflake, settings: PkGuildSystem, token: String): Request<PkGuildSystem, PkGuildSystem> {
+            return push(patch("systems/@me/guilds/$guild", settings, token))
         }
 
-        fun getAutoProxy(guild: PkSnowflake, token: String, onComplete: Response<PkAutoProxy>.() -> Unit) {
-            push(get("systems/@me/autoproxy?guild_id=$guild", token, onComplete))
+        fun getAutoProxy(guild: PkSnowflake, token: String): Request<PkType, PkAutoProxy> {
+            return push(get("systems/@me/autoproxy?guild_id=$guild", token))
         }
 
-        fun updateAutoProxy(guild: PkSnowflake, autoProxy: PkAutoProxy, token: String, onComplete: Response<PkAutoProxy>.() -> Unit) {
-            push(patch("systems/@me/autoproxy?guild_id=$guild", autoProxy, token, onComplete))
+        fun updateAutoProxy(guild: PkSnowflake, autoProxy: PkAutoProxy, token: String): Request<PkAutoProxy, PkAutoProxy> {
+            return push(patch("systems/@me/autoproxy?guild_id=$guild", autoProxy, token))
         }
     }
 
     object Member {
-        fun getMembers(systemRef: PkReference, token: String? = null, onComplete: Response<Array<PkMember>>.() -> Unit) {
-            push(get("systems/$systemRef/members", token, onComplete))
+        fun getMembers(systemRef: PkReference, token: String? = null): Request<PkType, Array<PkMember>> {
+            return push(get("systems/$systemRef/members", token))
         }
 
-        fun createMember(member: PkMember, token: String, onComplete: Response<PkMember>.() -> Unit) {
-            push(post("members", member, token, onComplete))
+        fun createMember(member: PkMember, token: String): Request<PkMember, PkMember> {
+            return push(post("members", member, token))
         }
 
-        fun getMember(memberRef: PkReference, token: String? = null, onComplete: Response<PkMember>.() -> Unit) {
-            push(get("members/$memberRef", token, onComplete))
+        fun getMember(memberRef: PkReference, token: String? = null): Request<PkType, PkMember> {
+            return push(get("members/$memberRef", token))
         }
 
-        fun updateMember(memberRef: PkReference, member: PkMember, token: String, onComplete: Response<PkMember>.() -> Unit) {
-            push(patch("members/$memberRef", member, token, onComplete))
+        fun updateMember(memberRef: PkReference, member: PkMember, token: String): Request<PkMember, PkMember> {
+            return push(patch("members/$memberRef", member, token))
         }
 
-        fun deleteMember(memberRef: PkReference, token: String, onComplete: Response<PkMember>.() -> Unit) {
-            push(delete("members/$memberRef", token, onComplete))
+        fun deleteMember(memberRef: PkReference, token: String): Request<PkType, PkMember> {
+            return push(delete("members/$memberRef", token))
         }
 
-        fun getMemberGroups(memberRef: PkReference, token: String? = null, onComplete: Response<Array<PkGroup>>.() -> Unit) {
-            push(get("members/$memberRef/groups", token, onComplete))
+        fun getMemberGroups(memberRef: PkReference, token: String? = null): Request<PkType, Array<PkReference>> {
+            return push(get("members/$memberRef/groups", token))
         }
 
-        fun addMemberToGroups(memberRef: PkReference, groups: Array<PkReference>, token: String, onComplete: Response<Array<PkReference>>.() -> Unit) {
-            push(post("members/$memberRef/groups/add", groups, token, onComplete))
+        fun addMemberToGroups(memberRef: PkReference, groups: Array<PkReference>, token: String): Request<Array<PkReference>, Array<PkReference>> {
+            return push(post("members/$memberRef/groups/add", groups, token))
         }
 
-        fun removeMemberFromGroups(memberRef: PkReference, groups: Array<PkReference>, token: String, onComplete: Response<Array<PkReference>>.() -> Unit) {
-            push(post("members/$memberRef/groups/add", groups, token, onComplete))
+        fun removeMemberFromGroups(memberRef: PkReference, groups: Array<PkReference>, token: String): Request<Array<PkReference>, Array<PkReference>> {
+            return push(post("members/$memberRef/groups/add", groups, token))
         }
 
-        fun overwriteMemberGroups(memberRef: PkReference, groups: Array<PkReference>, token: String, onComplete: Response<Array<PkReference>>.() -> Unit) {
-            push(post("members/$memberRef/groups/overwrite", groups, token, onComplete))
+        fun overwriteMemberGroups(memberRef: PkReference, groups: Array<PkReference>, token: String): Request<Array<PkReference>, Array<PkReference>> {
+            return push(post("members/$memberRef/groups/overwrite", groups, token))
         }
 
-        fun getMemberGuild(memberRef: PkReference, guild: PkSnowflake, token: String? = null, onComplete: Response<PkMember>.() -> Unit) {
-            push(get("members/$memberRef/guilds/$guild", token, onComplete))
+        fun getMemberGuild(memberRef: PkReference, guild: PkSnowflake, token: String? = null): Request<PkType, PkMember> {
+            return push(get("members/$memberRef/guilds/$guild", token))
         }
 
-        fun updateMemberGuild(memberRef: PkReference, guild: PkSnowflake, member: PkGuildMember, token: String, onComplete: Response<PkGuildMember>.() -> Unit) {
-            push(patch("members/$memberRef/guilds/$guild", member, token, onComplete))
+        fun updateMemberGuild(memberRef: PkReference, guild: PkSnowflake, member: PkGuildMember, token: String): Request<PkGuildMember, PkGuildMember> {
+            return push(patch("members/$memberRef/guilds/$guild", member, token))
         }
     }
 
     object Group {
-        fun getGroups(systemRef: PkReference, token: String? = null, onComplete: Response<Array<PkGroup>>.() -> Unit) {
-            push(get("systems/$systemRef/groups", token, onComplete))
+        fun getGroups(systemRef: PkReference, token: String? = null): Request<PkType, Array<PkGroup>> {
+            return push(get("systems/$systemRef/groups", token))
         }
 
-        fun createGroup(group: PkGroup, token: String, onComplete: Response<PkGroup>.() -> Unit) {
-            push(post("groups", group, token, onComplete))
+        fun createGroup(group: PkGroup, token: String): Request<PkGroup, PkGroup> {
+            return push(post("groups", group, token))
         }
 
-        fun getGroup(groupRef: PkReference, token: String? = null, onComplete: Response<PkGroup>.() -> Unit) {
-            push(get("groups/$groupRef", token, onComplete))
+        fun getGroup(groupRef: PkReference, token: String? = null): Request<PkType, PkGroup> {
+            return push(get("groups/$groupRef", token))
         }
 
-        fun updateGroup(groupRef: PkReference, group: PkGroup, token: String, onComplete: Response<PkGroup>.() -> Unit) {
-            push(patch("groups/$groupRef", group, token, onComplete))
+        fun updateGroup(groupRef: PkReference, group: PkGroup, token: String): Request<PkGroup, PkGroup> {
+            return push(patch("groups/$groupRef", group, token))
         }
 
-        fun deleteGroup(groupRef: PkReference, token: String, onComplete: Response<PkGroup>.() -> Unit) {
-            push(delete("groups/$groupRef", token, onComplete))
+        fun deleteGroup(groupRef: PkReference, token: String): Request<PkType, PkGroup> {
+            return push(delete("groups/$groupRef", token))
         }
 
-        fun getGroupMembers(groupRef: PkReference, token: String? = null, onComplete: Response<Array<PkMember>>.() -> Unit) {
-            push(get("groups/$groupRef/members", token, onComplete))
+        fun getGroupMembers(groupRef: PkReference, token: String? = null): Request<PkType, Array<PkMember>> {
+            return push(get("groups/$groupRef/members", token))
         }
 
-        fun addMembersToGroup(groupRef: PkReference, members: Array<PkReference>, token: String, onComplete: Response<Array<PkReference>>.() -> Unit) {
-            push(post("groups/$groupRef/members/add", members, token, onComplete))
+        fun addMembersToGroup(groupRef: PkReference, members: Array<PkReference>, token: String): Request<Array<PkReference>, Array<PkReference>> {
+            return push(post("groups/$groupRef/members/add", members, token))
         }
 
-        fun removeMembersFromGroup(groupRef: PkReference, members: Array<PkReference>, token: String, onComplete: Response<Array<PkReference>>.() -> Unit) {
-            push(post("groups/$groupRef/members/remove", members, token, onComplete))
+        fun removeMembersFromGroup(groupRef: PkReference, members: Array<PkReference>, token: String): Request<Array<PkReference>, Array<PkReference>> {
+            return push(post("groups/$groupRef/members/remove", members, token))
         }
 
-        fun overwriteMembersInGroup(groupRef: PkReference, members: Array<PkReference>, token: String, onComplete: Response<Array<PkReference>>.() -> Unit) {
-            push(post("groups/$groupRef/members/overwrite", members, token, onComplete))
+        fun overwriteMembersInGroup(groupRef: PkReference, members: Array<PkReference>, token: String): Request<Array<PkReference>, Array<PkReference>> {
+            return push(post("groups/$groupRef/members/overwrite", members, token))
         }
     }
 
     object Switch {
-        fun getSwitches(systemRef: PkReference, before: Instant, limit: Int = 100, token: String? = null, onComplete: Response<Array<PkSwitch>>.() -> Unit) {
+        fun getSwitches(systemRef: PkReference, before: Instant, limit: Int = 100, token: String? = null): Request<PkType, Array<PkSwitch>> {
             if (limit > 100) throw IllegalArgumentException("Limit cannot be greater than 100.")
-            push(get("systems/$systemRef/switches?$before&$limit", token, onComplete))
+            return push(get("systems/$systemRef/switches?$before&$limit", token))
         }
 
-        fun getFronters(systemRef: PkReference, token: String? = null, onComplete: Response<PkFronter>.() -> Unit) {
-            push(get("systems/$systemRef/fronters", token, onComplete))
+        fun getFronters(systemRef: PkReference, token: String? = null): Request<PkType, PkFronter> {
+            return push(get("systems/$systemRef/fronters", token))
         }
 
-        fun createSwitch(create: SwitchCreate, token: String, onComplete: Response<PkFronter>.() -> Unit) {
-            push(post("systems/@me/switches", create, token, onComplete))
+        fun createSwitch(create: SwitchCreate, token: String): Request<SwitchCreate, PkFronter> {
+            return push(post("systems/@me/switches", create, token))
         }
 
-        fun getSwitch(systemRef: PkReference, switchRef: PkReference, token: String? = null, onComplete: Response<PkFronter>.() -> Unit) {
-            push(get("systems/$systemRef/switches/$switchRef", token, onComplete))
+        fun getSwitch(systemRef: PkReference, switchRef: PkReference, token: String? = null): Request<PkType, PkFronter> {
+            return push(get("systems/$systemRef/switches/$switchRef", token))
         }
 
-        fun updateSwitch(systemRef: PkReference, switchRef: PkReference, switch: SwitchCreate, token: String, onComplete: Response<PkFronter>.() -> Unit) {
-            push(patch("systems/$systemRef/switches/$switchRef", switch, token, onComplete))
+        fun updateSwitch(systemRef: PkReference, switchRef: PkReference, switch: SwitchCreate, token: String): Request<SwitchCreate, PkFronter> {
+            return push(patch("systems/$systemRef/switches/$switchRef", switch, token))
         }
 
-        fun deleteSwitch(systemRef: PkReference, switchRef: PkReference, token: String, onComplete: Response<PkFronter>.() -> Unit) {
-            push(delete("systems/$systemRef/switches/$switchRef", token, onComplete))
+        fun deleteSwitch(systemRef: PkReference, switchRef: PkReference, token: String): Request<PkType, PkFronter> {
+            return push(delete("systems/$systemRef/switches/$switchRef", token))
         }
 
-        fun updateSwitchMembers(systemRef: PkReference, switchRef: PkReference, members: Array<PkReference>, token: String, onComplete: Response<PkFronter>.() -> Unit) {
-            push(patch("systems/$systemRef/switches/$switchRef/members", members, token, onComplete))
+        fun updateSwitchMembers(systemRef: PkReference, switchRef: PkReference, members: Array<PkReference>, token: String): Request<Array<PkReference>, PkFronter> {
+            return push(patch("systems/$systemRef/switches/$switchRef/members", members, token))
         }
     }
 
     object Misc {
-        fun getMessage(message: PkSnowflake, token: String? = null, onComplete: Response<PkMessage>.() -> Unit) {
-            push(get("messages/$message", token, onComplete))
+        fun getMessage(message: PkSnowflake, token: String? = null): Request<PkType, PkMessage> {
+            return push(get("messages/$message", token))
         }
     }
 }
