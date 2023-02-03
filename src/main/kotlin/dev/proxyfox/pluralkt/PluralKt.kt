@@ -76,22 +76,24 @@ object PluralKt {
                 request.token?.let { header("Authorization", it) }
             }
         }
-        if (req.status.value == 200) {
-            try {
-                request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
-            } catch (a: JsonConvertException) {
+        GlobalScope.launch {
+            if (req.status.value == 200) {
                 try {
-                    request.onComplete(ResponseError(req.body(), a))
+                    request.onComplete(ResponseSuccess(req.body(request.outputTypeInfo)))
+                } catch (a: JsonConvertException) {
+                    try {
+                        request.onComplete(ResponseError(req.body(), a))
+                    } catch (b: JsonConvertException) {
+                        b.addSuppressed(a)
+                        request.onComplete(ResponseNull(b))
+                    }
+                }
+            } else {
+                try {
+                    request.onComplete(ResponseError(req.body()))
                 } catch (b: JsonConvertException) {
-                    b.addSuppressed(a)
                     request.onComplete(ResponseNull(b))
                 }
-            }
-        } else {
-            try {
-                request.onComplete(ResponseError(req.body()))
-            } catch (b: JsonConvertException) {
-                request.onComplete(ResponseNull(b))
             }
         }
 
