@@ -51,15 +51,15 @@ class DispatchWebhook(val token: String, private val id: String = "") {
         private val webhooks = hashMapOf<String, DispatchWebhook>()
 
         fun Routing.initDispatch(endpoint: String = "/") {
-            post("$endpoint/{id}") {
-                val webhook = webhooks[call.parameters["id"]] ?: return@post call.respond(404)
-                val event = json.decodeFromString<Event>(call.receiveText())
-                if (event.signingToken != webhook.token) return@post call.respond(401)
-                webhook.dispatcher.emitEvent(event)
-                call.respond(200)
+            route(endpoint) {
+                post("{id}") {
+                    val webhook = webhooks[call.parameters["id"]] ?: return@post call.respond(404)
+                    val event = json.decodeFromString<Event>(call.receiveText())
+                    if (event.signingToken != webhook.token) return@post call.respond(401)
+                    webhook.dispatcher.emitEvent(event)
+                    call.respond(200)
+                }
             }
         }
     }
 }
-
-
