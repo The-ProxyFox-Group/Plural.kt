@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.proxyfox"
-version = "1.7"
+version = "1.8"
 val ktor_version = "2.1.0"
 
 repositories {
