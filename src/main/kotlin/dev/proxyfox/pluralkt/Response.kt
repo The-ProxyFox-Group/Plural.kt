@@ -25,7 +25,7 @@ class ResponseSuccess<T>(private val value: T) : Response<T> {
     override fun isError(): Boolean = false
 
     override fun getError(): PkError = throw IllegalStateException("Response is not an error")
-    override fun getException(): JsonConvertException = throw IllegalStateException("Response is not an error")
+    override fun getException(): JsonConvertException? = null
 
     override fun toString(): String = value.toString()
 }
