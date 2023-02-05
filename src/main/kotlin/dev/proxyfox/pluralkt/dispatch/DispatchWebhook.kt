@@ -25,16 +25,41 @@ class DispatchWebhook(val token: String, private val id: String = "") {
 
     suspend inline fun <reified T : Event> on(noinline consumer: suspend T.() -> Unit): Job = dispatcher.on(consumer=consumer)
 
+    /**
+     * Starts accepting events.
+     *
+     * Only works if using [initGlobalDispatch]
+     * */
     fun start() {
         if (webhooks[id] != this) throw IllegalStateException("ID $id is taken by another webhook!")
         if (id in webhooks) throw IllegalStateException("ID $id is already active!")
         webhooks[id] = this
     }
 
+    /**
+     * Stops accepting events.
+     *
+     * Only works if using [initGlobalDispatch]
+     * */
     fun stop() {
         if (id !in webhooks) throw IllegalStateException("ID $id is not active!")
         if (webhooks[id] != this) throw IllegalStateException("ID $id is taken by another webhook!")
         webhooks.remove(id)
+    }
+
+    /**
+     * Sets up routing for this webhook only.
+     * Useful for when you only need a single webhook
+     *
+     * Use [initGlobalDispatch] if you're setting up multiple webhooks
+     * */
+    fun Routing.initSingletonDispatch() {
+        post {
+            val event = json.decodeFromString<Event>(call.receiveText())
+            if (event.signingToken != token) return@post call.respond(401)
+            dispatcher.emitEvent(event)
+            call.respond(200)
+        }
     }
 
     companion object {
@@ -50,7 +75,7 @@ class DispatchWebhook(val token: String, private val id: String = "") {
 
         private val webhooks = hashMapOf<String, DispatchWebhook>()
 
-        fun Routing.initDispatch(endpoint: String = "/") {
+        fun Routing.initGlobalDispatch(endpoint: String = "/") {
             route(endpoint) {
                 post("{id}") {
                     val webhook = webhooks[call.parameters["id"]] ?: return@post call.respond(404)
