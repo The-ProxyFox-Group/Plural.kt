@@ -1,4 +1,4 @@
-package dev.proxyfox.pluralkt.dispatch.event
+package dev.proxyfox.pluralkt.dispatch
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

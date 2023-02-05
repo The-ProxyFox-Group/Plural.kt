@@ -1,7 +1,5 @@
 package dev.proxyfox.pluralkt.dispatch
 
-import dev.proxyfox.pluralkt.dispatch.event.EventDispatcher
-import dev.proxyfox.pluralkt.dispatch.types.PingEvent
 import dev.proxyfox.pluralkt.dispatch.types.Event
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -9,9 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Job
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import kotlinx.serialization.decodeFromString
 
 /**
