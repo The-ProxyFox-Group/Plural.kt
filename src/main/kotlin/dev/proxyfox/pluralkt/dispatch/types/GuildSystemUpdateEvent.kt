@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
 @Serializable
-@SerialName("UPDATE_SYSTEM")
-class SystemUpdateEvent : Event {
+@SerialName("UPDATE_SYSTEM_GUILD")
+class GuildSystemUpdateEvent : Event {
     constructor(
         signingToken: String,
         systemId: PkId?,

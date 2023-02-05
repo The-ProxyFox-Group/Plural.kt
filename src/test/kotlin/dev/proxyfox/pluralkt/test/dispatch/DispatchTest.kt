@@ -1,21 +1,26 @@
 package dev.proxyfox.pluralkt.test.dispatch
 
 import dev.proxyfox.pluralkt.dispatch.DispatchWebhook
-import dev.proxyfox.pluralkt.dispatch.types.PingEvent
 import dev.proxyfox.pluralkt.dispatch.types.Event
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
+import dev.proxyfox.pluralkt.dispatch.types.PingEvent
+import dev.proxyfox.pluralkt.dispatch.types.SystemUpdateEvent
+import io.ktor.server.cio.*
+import io.ktor.server.engine.*
+import io.ktor.server.routing.*
 
-fun main() {
-    val test = PingEvent("", "", null)
-    val json = DispatchWebhook.json.encodeToString(test)
-    println(json)
-    println(DispatchWebhook.json.decodeFromString<Event>("""
-        {
-            "type": "PING",
-            "signing_token": "",
-            "system_id": "",
-            "id": null
+val token = System.getenv("DISPATCH_TOKEN")
+
+suspend fun main() {
+    val webhook = DispatchWebhook(token)
+
+    webhook.on<Event> {
+        println("${this::class.simpleName}, $data")
+    }
+    embeddedServer(CIO, port = 8080) {
+        routing {
+            with(webhook) {
+                initSingletonDispatch()
+            }
         }
-    """.trimIndent()))
+    }.start(wait = true)
 }

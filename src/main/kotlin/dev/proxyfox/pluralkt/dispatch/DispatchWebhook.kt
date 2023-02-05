@@ -55,34 +55,41 @@ class DispatchWebhook(val token: String, private val id: String = "") {
      * */
     fun Routing.initSingletonDispatch() {
         post {
-            val event = json.decodeFromString<Event>(call.receiveText())
-            if (event.signingToken != token) return@post call.respond(401)
-            dispatcher.emitEvent(event)
-            call.respond(200)
+            handleCall(this@DispatchWebhook, call)
         }
     }
 
     companion object {
-        private val serializersModule = SerializersModule {
-            polymorphic(Event::class) {
-                subclass(PingEvent::class)
-            }
-        }
         val json = Json {
             ignoreUnknownKeys = true
-            serializersModule = this@Companion.serializersModule
         }
 
         private val webhooks = hashMapOf<String, DispatchWebhook>()
 
+        private suspend fun handleCall(webhook: DispatchWebhook, call: ApplicationCall) {
+            try {
+                val text = call.receiveText()
+                val event = json.decodeFromString<Event>(text)
+                event.jsonData = text
+                if (event.signingToken != webhook.token) return call.respond(401)
+                webhook.dispatcher.emitEvent(event)
+                call.respond(200)
+            } catch (err: Throwable) {
+                err.printStackTrace()
+                call.respond(500)
+            }
+        }
+
+        /**
+         * Sets up global dispatch
+         *
+         * Use [initSingletonDispatch] if you only need one webhook
+         * */
         fun Routing.initGlobalDispatch(endpoint: String = "/") {
             route(endpoint) {
                 post("{id}") {
                     val webhook = webhooks[call.parameters["id"]] ?: return@post call.respond(404)
-                    val event = json.decodeFromString<Event>(call.receiveText())
-                    if (event.signingToken != webhook.token) return@post call.respond(401)
-                    webhook.dispatcher.emitEvent(event)
-                    call.respond(200)
+                    handleCall(webhook, call)
                 }
             }
         }
