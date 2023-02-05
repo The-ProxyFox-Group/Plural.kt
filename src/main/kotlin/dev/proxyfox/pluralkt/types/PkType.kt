@@ -1,5 +1,5 @@
 package dev.proxyfox.pluralkt.types
 
-interface PkType {
+sealed interface PkType {
     override fun toString(): String
 }
