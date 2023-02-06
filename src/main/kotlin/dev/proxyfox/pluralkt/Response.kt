@@ -3,7 +3,7 @@ package dev.proxyfox.pluralkt
 import dev.proxyfox.pluralkt.types.*
 import io.ktor.serialization.*
 
-interface Response<T> {
+sealed interface Response<T> {
     fun isSuccess(): Boolean
 
     fun getSuccess(): T
